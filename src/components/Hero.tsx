@@ -38,14 +38,14 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/70 to-neutral-950/20" />
       </div>
 
-      <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-center gap-4 px-4 py-24 text-white lg:px-8">
-        <span className="text-sm uppercase tracking-widest text-emerald-300/80">
+      <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-center gap-4 px-4 py-16 text-white sm:py-24 lg:px-8">
+        <span className="text-xs uppercase tracking-widest text-emerald-300/80 sm:text-sm">
           Nova coleção disponível
         </span>
-        <h1 className="max-w-xl text-4xl font-bold leading-tight sm:text-5xl">
+        <h1 className="max-w-xl text-3xl font-bold leading-tight sm:text-5xl">
           Fotografias autorais para decorar seu ambiente
         </h1>
-        <p className="max-w-lg text-neutral-300">
+        <p className="max-w-lg text-sm text-neutral-300 sm:text-base">
           Coleções renovadas a cada 3 meses, impressas em tela canvas de alta qualidade.
         </p>
         <a

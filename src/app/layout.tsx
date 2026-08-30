@@ -18,6 +18,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Filipe Lara Fotografia | Quadros Decorativos",
   description: "Fotografias autorais impressas em tela canvas, organizadas por coleções.",
+  other: {
+    "color-scheme": "light",
+  },
+};
+
+export const viewport = {
+  themeColor: "#ffffff",
+  colorScheme: "light" as const,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -12,11 +13,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* O site sempre usa o tema claro, independente da configuração do
+   dispositivo do usuário (modo escuro do sistema/navegador não se aplica). */
+html {
+  color-scheme: light;
 }
 
 body {
