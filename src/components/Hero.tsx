@@ -31,11 +31,12 @@ export default function Hero() {
             src={src}
             alt=""
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-              i === ativo ? "opacity-45" : "opacity-0"
+              i === ativo ? "opacity-100" : "opacity-0"
             }`}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/70 to-neutral-950/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/55 to-neutral-950/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent to-transparent" />
       </div>
 
       <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-center gap-4 px-4 py-16 text-white sm:py-24 lg:px-8">
