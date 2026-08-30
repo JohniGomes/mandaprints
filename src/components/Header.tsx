@@ -39,9 +39,6 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-3 text-sm text-neutral-700 sm:gap-5">
-          <Link href="/atendimento" className="hidden md:block hover:text-neutral-900">
-            Atendimento
-          </Link>
           <Link href="/carrinho" className="relative flex items-center gap-1 hover:text-neutral-900">
             <span className="hidden sm:inline">Carrinho</span>
             <svg
@@ -118,15 +115,6 @@ export default function Header() {
                   </Link>
                 </li>
               ))}
-              <li className="mt-2 border-t border-neutral-200 pt-2">
-                <Link
-                  href="/atendimento"
-                  onClick={() => setMenuAberto(false)}
-                  className="block rounded-md px-3 py-3 text-sm font-medium hover:bg-neutral-100"
-                >
-                  Atendimento
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
