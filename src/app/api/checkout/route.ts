@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CartItem } from "@/lib/cart-context";
+import { getSupabaseServerClient } from "@/lib/supabase";
 
 /**
  * Cria uma preferência de pagamento no Mercado Pago (Checkout Pro) e devolve
@@ -65,6 +66,25 @@ export async function POST(req: NextRequest) {
   }
 
   const preference = await preferenceResp.json();
+
+  const total =
+    body.itens.reduce((acc, item) => acc + item.preco * item.quantidade, 0) +
+    (body.frete?.preco ?? 0);
+
+  try {
+    const supabase = getSupabaseServerClient();
+    await supabase.from("pedidos").insert({
+      mercadopago_preference_id: preference.id,
+      status: "pendente",
+      itens: body.itens,
+      frete: body.frete,
+      total,
+    });
+  } catch (err) {
+    // Não bloqueia o checkout se o Supabase ainda não estiver configurado —
+    // apenas registra no log do servidor para investigação.
+    console.error("Falha ao salvar pedido no Supabase:", err);
+  }
 
   return NextResponse.json({
     init_point: preference.init_point,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enviarEmail } from "@/lib/email";
+import { getSupabaseServerClient } from "@/lib/supabase";
 
 /**
  * Webhook do Mercado Pago.
@@ -44,8 +45,43 @@ export async function POST(req: NextRequest) {
 
   const pagamento = await pagamentoResp.json();
 
+  const preferenceId = pagamento.order?.id ?? pagamento.metadata?.preference_id;
+
+  try {
+    const supabase = getSupabaseServerClient();
+    const update = supabase
+      .from("pedidos")
+      .update({
+        status: pagamento.status === "approved" ? "aprovado" : pagamento.status,
+        mercadopago_payment_id: String(paymentId),
+        cliente_nome: pagamento.payer?.first_name ?? null,
+        cliente_email: pagamento.payer?.email ?? null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("mercadopago_payment_id", String(paymentId));
+
+    // Na primeira atualização o pedido ainda está identificado pela preferência,
+    // não pelo payment_id — tenta os dois critérios.
+    if (preferenceId) {
+      await supabase
+        .from("pedidos")
+        .update({
+          status: pagamento.status === "approved" ? "aprovado" : pagamento.status,
+          mercadopago_payment_id: String(paymentId),
+          cliente_nome: pagamento.payer?.first_name ?? null,
+          cliente_email: pagamento.payer?.email ?? null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("mercadopago_preference_id", String(preferenceId));
+    } else {
+      await update;
+    }
+  } catch (err) {
+    console.error("Falha ao atualizar pedido no Supabase:", err);
+  }
+
   if (pagamento.status !== "approved") {
-    // Ainda pendente, rejeitado etc. — não dispara nada.
+    // Ainda pendente, rejeitado etc. — não dispara e-mail.
     return NextResponse.json({ recebido: true, status: pagamento.status });
   }
 
