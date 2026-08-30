@@ -1,15 +1,29 @@
+import Link from "next/link";
+
 const colunas = [
   {
     titulo: "Sobre a Filipe Lara",
-    links: ["Quem Somos", "Fale Conosco", "Política de Privacidade", "Blog"],
+    links: [
+      { label: "Quem Somos", href: "/quem-somos" },
+      { label: "Fale Conosco", href: "/fale-conosco" },
+      { label: "Política de Privacidade", href: "/politica-privacidade" },
+    ],
   },
   {
     titulo: "Sobre o Produto",
-    links: ["Material e Qualidade", "Quadros Personalizados", "Troca e Devolução", "Política de Entrega"],
+    links: [
+      { label: "Material e Qualidade", href: "/material-qualidade" },
+      { label: "Troca e Devolução", href: "/troca-devolucao" },
+      { label: "Política de Entrega", href: "/politica-entrega" },
+    ],
   },
   {
     titulo: "Ajuda",
-    links: ["Rastreio do Pedido", "Como Pendurar seu Quadro", "Perguntas Frequentes"],
+    links: [
+      { label: "Rastreio do Pedido", href: "/rastreio" },
+      { label: "Dicas", href: "/dicas" },
+      { label: "Perguntas Frequentes", href: "/faq" },
+    ],
   },
 ];
 
@@ -28,10 +42,10 @@ export default function Footer() {
             <h5 className="text-sm font-semibold uppercase text-neutral-900">{coluna.titulo}</h5>
             <ul className="mt-3 space-y-2 text-sm text-neutral-600">
               {coluna.links.map((l) => (
-                <li key={l}>
-                  <a href="#" className="hover:text-neutral-900">
-                    {l}
-                  </a>
+                <li key={l.href}>
+                  <Link href={l.href} className="hover:text-neutral-900">
+                    {l.label}
+                  </Link>
                 </li>
               ))}
             </ul>
