@@ -42,9 +42,6 @@ export default function Header() {
           <Link href="/atendimento" className="hidden md:block hover:text-neutral-900">
             Atendimento
           </Link>
-          <Link href="/conta" className="hidden md:block hover:text-neutral-900">
-            Minha conta
-          </Link>
           <Link href="/carrinho" className="relative flex items-center gap-1 hover:text-neutral-900">
             <span className="hidden sm:inline">Carrinho</span>
             <svg
@@ -128,15 +125,6 @@ export default function Header() {
                   className="block rounded-md px-3 py-3 text-sm font-medium hover:bg-neutral-100"
                 >
                   Atendimento
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/conta"
-                  onClick={() => setMenuAberto(false)}
-                  className="block rounded-md px-3 py-3 text-sm font-medium hover:bg-neutral-100"
-                >
-                  Minha conta
                 </Link>
               </li>
             </ul>
