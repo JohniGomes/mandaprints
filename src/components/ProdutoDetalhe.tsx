@@ -5,7 +5,7 @@ import { Product } from "@/lib/types";
 import { calcularPrecoVariante } from "@/lib/products";
 import { useCart } from "@/lib/cart-context";
 import { useRouter } from "next/navigation";
-import { MockupParede, FotoCompleta } from "./WallMockup";
+import ImagemComZoom from "./ImagemComZoom";
 
 function formatarPreco(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -17,7 +17,6 @@ export default function ProdutoDetalhe({ produto }: { produto: Product }) {
 
   const [imagemAtiva, setImagemAtiva] = useState(0);
   const [visualizacao, setVisualizacao] = useState<"quadro" | "foto">("quadro");
-  const [ampliado, setAmpliado] = useState(false);
   const [tamanhoId, setTamanhoId] = useState(produto.variantes.tamanhos[0].id);
   const [molduraId, setMolduraId] = useState(produto.variantes.molduras[0].id);
   const [acabamentoId, setAcabamentoId] = useState(produto.variantes.acabamentos[0].id);
@@ -86,44 +85,12 @@ export default function ProdutoDetalhe({ produto }: { produto: Product }) {
             </button>
           </div>
 
-          <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-100">
-            <div
-              className={`h-full w-full transition-transform duration-300 ${
-                ampliado ? "scale-[1.8] cursor-zoom-out" : "cursor-zoom-in"
-              }`}
-              onClick={() => setAmpliado((a) => !a)}
-            >
-              {visualizacao === "quadro" ? (
-                <MockupParede src={produto.imagens[imagemAtiva]} alt={produto.nome} />
-              ) : (
-                <FotoCompleta src={produto.imagens[imagemAtiva]} alt={produto.nome} />
-              )}
-            </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setAmpliado((a) => !a);
-              }}
-              aria-label={ampliado ? "Afastar" : "Aproximar"}
-              className="absolute top-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-neutral-800 shadow-md transition hover:bg-white"
-            >
-              {ampliado ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="7" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  <line x1="8" y1="11" x2="14" y2="11" />
-                </svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="7" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  <line x1="11" y1="8" x2="11" y2="14" />
-                  <line x1="8" y1="11" x2="14" y2="11" />
-                </svg>
-              )}
-            </button>
-          </div>
+          <ImagemComZoom
+            key={`${imagemAtiva}-${visualizacao}`}
+            src={produto.imagens[imagemAtiva]}
+            alt={produto.nome}
+            visualizacao={visualizacao}
+          />
 
           <div className="mt-3 flex gap-3">
             {produto.imagens.map((img, i) => (
