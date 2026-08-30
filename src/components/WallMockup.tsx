@@ -17,12 +17,6 @@ const variantes: Variante[] = [
     frame: "border-[3px] border-neutral-900/90 shadow-[0_18px_35px_-12px_rgba(0,0,0,0.45)]",
   },
   {
-    id: "escura",
-    wall: "linear-gradient(180deg, #2e2d2b 0%, #1c1b1a 100%)",
-    frame: "border-[10px] border-white shadow-[0_18px_35px_-10px_rgba(0,0,0,0.6)]",
-    mat: "p-1.5 bg-white",
-  },
-  {
     id: "aconchegante",
     wall: "linear-gradient(180deg, #ecdfc4 0%, #dcc9a3 100%)",
     frame: "border-[6px] border-[#5b3d24] shadow-[0_18px_35px_-12px_rgba(0,0,0,0.4)]",

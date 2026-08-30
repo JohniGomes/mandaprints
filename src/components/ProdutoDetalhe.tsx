@@ -5,6 +5,7 @@ import { Product } from "@/lib/types";
 import { calcularPrecoVariante } from "@/lib/products";
 import { useCart } from "@/lib/cart-context";
 import { useRouter } from "next/navigation";
+import WallMockup from "./WallMockup";
 
 function formatarPreco(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -59,17 +60,8 @@ export default function ProdutoDetalhe({ produto }: { produto: Product }) {
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
         {/* Galeria */}
         <div>
-          <div className="aspect-square w-full overflow-hidden rounded-lg bg-neutral-100">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={produto.imagens[imagemAtiva]}
-              alt={produto.nome}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><rect width='100%' height='100%' fill='%23e5e5e5'/></svg>";
-              }}
-            />
+          <div className="w-full overflow-hidden rounded-lg">
+            <WallMockup src={produto.imagens[imagemAtiva]} alt={produto.nome} />
           </div>
           <div className="mt-3 flex gap-3">
             {produto.imagens.map((img, i) => (
