@@ -1,4 +1,4 @@
-const NUMERO_WHATSAPP = "555189739921";
+const NUMERO_WHATSAPP = "5551989739921";
 const MENSAGEM_PADRAO = "Olá! Vim pelo site e gostaria de tirar uma dúvida.";
 
 export default function WhatsAppButton() {
