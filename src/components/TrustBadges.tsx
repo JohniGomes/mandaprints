@@ -1,3 +1,5 @@
+import ScrollReveal from "./ScrollReveal";
+
 function IconPix() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -47,14 +49,16 @@ export default function TrustBadges() {
   return (
     <section className="border-b border-neutral-100 bg-white">
       <div className="mx-auto grid max-w-7xl grid-cols-2 divide-neutral-100 px-4 py-8 sm:grid-cols-4 sm:divide-x lg:px-8">
-        {badges.map(({ icon: Icon, titulo, texto }) => (
-          <div key={titulo} className="flex flex-col items-center gap-2 px-3 py-3 text-center sm:items-start sm:text-left">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-              <Icon />
-            </span>
-            <h3 className="text-sm font-semibold text-neutral-900">{titulo}</h3>
-            <p className="text-xs leading-snug text-neutral-500">{texto}</p>
-          </div>
+        {badges.map(({ icon: Icon, titulo, texto }, i) => (
+          <ScrollReveal key={titulo} atraso={i * 100}>
+            <div className="flex flex-col items-center gap-2 px-3 py-3 text-center sm:items-start sm:text-left">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                <Icon />
+              </span>
+              <h3 className="text-sm font-semibold text-neutral-900">{titulo}</h3>
+              <p className="text-xs leading-snug text-neutral-500">{texto}</p>
+            </div>
+          </ScrollReveal>
         ))}
       </div>
     </section>

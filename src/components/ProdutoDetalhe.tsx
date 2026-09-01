@@ -6,6 +6,7 @@ import { calcularPrecoVariante } from "@/lib/products";
 import { useCart } from "@/lib/cart-context";
 import { useRouter } from "next/navigation";
 import ImagemComZoom from "./ImagemComZoom";
+import ScrollReveal from "./ScrollReveal";
 
 function formatarPreco(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -60,7 +61,7 @@ export default function ProdutoDetalhe({ produto }: { produto: Product }) {
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
         {/* Galeria */}
-        <div>
+        <ScrollReveal>
           {/* Alternar entre foto do quadro na parede e a foto completa */}
           <div className="mb-3 inline-flex rounded-full border border-neutral-300 p-1 text-sm">
             <button
@@ -114,10 +115,10 @@ export default function ProdutoDetalhe({ produto }: { produto: Product }) {
               </button>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Info + variantes */}
-        <div>
+        <ScrollReveal atraso={150}>
           <p className="text-xs uppercase tracking-wide text-neutral-500">
             REF: {produto.referencia}
           </p>
@@ -208,7 +209,7 @@ export default function ProdutoDetalhe({ produto }: { produto: Product }) {
           </div>
 
           <p className="mt-8 text-sm leading-relaxed text-neutral-600">{produto.descricao}</p>
-        </div>
+        </ScrollReveal>
       </div>
     </div>
   );
