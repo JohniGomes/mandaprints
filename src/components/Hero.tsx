@@ -23,15 +23,15 @@ export default function Hero() {
       <div className="relative mx-auto flex max-w-5xl flex-col items-center justify-center gap-8 px-4 py-24 text-center text-white sm:py-32">
         <ScrollReveal>
           <h1 className="max-w-3xl text-3xl font-light leading-tight sm:text-5xl">
-            Fotografias autorais para transformar paredes em{" "}
-            <span className="font-bold text-emerald-400">presença.</span>
+            Fotografias autorais para transformar suas paredes em{" "}
+            <span className="font-bold text-emerald-400">vida.</span>
           </h1>
         </ScrollReveal>
 
         <ScrollReveal atraso={150}>
           <a
             href="#mais-vendidos"
-            className="rounded-sm border border-emerald-400 px-8 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-emerald-400 hover:text-neutral-900"
+            className="rounded-sm px-8 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-emerald-400 hover:text-neutral-900"
           >
             Explorar as obras
           </a>
