@@ -2,6 +2,8 @@ import Hero from "@/components/Hero";
 import TrustBadges from "@/components/TrustBadges";
 import ProductCard from "@/components/ProductCard";
 import ScrollReveal from "@/components/ScrollReveal";
+import SobreFotografo from "@/components/SobreFotografo";
+import CtaFinal from "@/components/CtaFinal";
 import { collections, getProductsByCollection } from "@/lib/products";
 import Link from "next/link";
 
@@ -43,6 +45,9 @@ export default function Home() {
           </section>
         );
       })}
+
+      <SobreFotografo />
+      <CtaFinal />
     </>
   );
 }

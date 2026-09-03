@@ -3,24 +3,27 @@ import ScrollReveal from "./ScrollReveal";
 
 const colunas = [
   {
-    titulo: "Sobre a Filipe Lara",
+    titulo: "Navegar",
     links: [
+      { label: "O fotógrafo", href: "#fotografo" },
+      { label: "Coleções", href: "/#mais-vendidos" },
       { label: "Quem Somos", href: "/quem-somos" },
-      { label: "Fale Conosco", href: "/fale-conosco" },
-      { label: "Política de Privacidade", href: "/politica-privacidade" },
     ],
   },
   {
-    titulo: "Sobre o Produto",
+    titulo: "Contato",
+    links: [
+      { label: "WhatsApp", href: "https://wa.me/5551989739921" },
+      { label: "Fale Conosco", href: "/fale-conosco" },
+    ],
+  },
+  {
+    titulo: "Curadoria",
     links: [
       { label: "Material e Qualidade", href: "/material-qualidade" },
       { label: "Troca e Devolução", href: "/troca-devolucao" },
       { label: "Política de Entrega", href: "/politica-entrega" },
-    ],
-  },
-  {
-    titulo: "Ajuda",
-    links: [
+      { label: "Política de Privacidade", href: "/politica-privacidade" },
       { label: "Rastreio do Pedido", href: "/rastreio" },
       { label: "Dicas", href: "/dicas" },
       { label: "Perguntas Frequentes", href: "/faq" },
@@ -30,22 +33,26 @@ const colunas = [
 
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t border-neutral-200 bg-neutral-50">
+    <footer className="mt-16 border-t border-white/10 bg-neutral-950 text-white">
       <ScrollReveal>
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
           <div>
-            <h4 className="text-xl font-bold tracking-widest text-neutral-900">FILIPE LARA</h4>
-            <p className="mt-3 text-sm text-neutral-600">
-              Fotografias autorais impressas em tela canvas de alta qualidade.
+            <h4 className="text-2xl font-bold tracking-wide">
+              Filipe<span className="text-emerald-400">Lara</span>
+            </h4>
+            <p className="mt-3 text-sm text-neutral-400">
+              por Filipe Lara · Coleção de quadros autorais
             </p>
           </div>
           {colunas.map((coluna) => (
             <div key={coluna.titulo}>
-              <h5 className="text-sm font-semibold uppercase text-neutral-900">{coluna.titulo}</h5>
-              <ul className="mt-3 space-y-2 text-sm text-neutral-600">
+              <h5 className="text-xs font-semibold uppercase tracking-widest text-neutral-500">
+                {coluna.titulo}
+              </h5>
+              <ul className="mt-4 space-y-2 text-sm text-neutral-300">
                 {coluna.links.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="hover:text-neutral-900">
+                    <Link href={l.href} className="hover:text-emerald-400">
                       {l.label}
                     </Link>
                   </li>
@@ -55,8 +62,9 @@ export default function Footer() {
           ))}
         </div>
       </ScrollReveal>
-      <div className="border-t border-neutral-200 px-4 py-6 text-center text-xs text-neutral-500 lg:px-8">
-        Copyright Filipe Lara Fotografia — {new Date().getFullYear()}. Todos os direitos reservados.
+      <div className="border-t border-white/10 px-4 py-6 text-center text-xs text-neutral-500 lg:px-8">
+        <p>© {new Date().getFullYear()} — Filipe Lara Fotografia. Todos os direitos reservados.</p>
+        <p className="mt-1">Todas as imagens são obra autoral · reprodução não autorizada.</p>
       </div>
     </footer>
   );

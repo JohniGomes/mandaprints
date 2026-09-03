@@ -9,7 +9,11 @@ export default function Header() {
   const { quantidadeTotal } = useCart();
   const [menuAberto, setMenuAberto] = useState(false);
 
-  const linksNav = collections.map((c) => ({ href: `/colecoes/${c.slug}`, label: c.nome }));
+  const linksNav = [
+    ...collections.map((c) => ({ href: `/colecoes/${c.slug}`, label: c.nome })),
+    { href: "/#fotografo", label: "Fotógrafo" },
+    { href: "/fale-conosco", label: "Contato" },
+  ];
 
   return (
     <header className="w-full border-b border-neutral-200 bg-white sticky top-0 z-50">
