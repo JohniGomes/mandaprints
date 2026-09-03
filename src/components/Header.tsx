@@ -1,29 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { collections } from "@/lib/products";
 import { useCart } from "@/lib/cart-context";
 
 export default function Header() {
   const { quantidadeTotal } = useCart();
   const [menuAberto, setMenuAberto] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
-
-  const isHome = pathname === "/";
-  const transparente = isHome && !scrolled;
-
-  useEffect(() => {
-    if (!isHome) return;
-    function onScroll() {
-      setScrolled(window.scrollY > 60);
-    }
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isHome]);
 
   const linksNav = [
     ...collections.map((c) => ({ href: `/colecoes/${c.slug}`, label: c.nome })),
@@ -32,20 +16,12 @@ export default function Header() {
   ];
 
   return (
-    <header
-      className={`w-full z-50 transition-colors duration-300 ${
-        transparente
-          ? "fixed top-0 border-b border-transparent bg-transparent"
-          : "sticky top-0 border-b border-neutral-200 bg-white"
-      }`}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-5 lg:px-8">
+    <header className="w-full border-b border-neutral-200 bg-white sticky top-0 z-50">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 lg:px-8">
         <button
           onClick={() => setMenuAberto(true)}
           aria-label="Abrir menu"
-          className={`flex h-9 w-9 items-center justify-center rounded-md hover:bg-white/10 md:hidden ${
-            transparente ? "text-white" : "text-neutral-700 hover:bg-neutral-100"
-          }`}
+          className="flex h-9 w-9 items-center justify-center rounded-md text-neutral-700 hover:bg-neutral-100 md:hidden"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="4" y1="6" x2="20" y2="6" strokeLinecap="round" />
@@ -54,28 +30,15 @@ export default function Header() {
           </svg>
         </button>
 
-        <Link href="/" className="leading-tight">
-          <span
-            className={`block text-lg font-bold tracking-[0.15em] sm:text-xl ${
-              transparente ? "text-white" : "text-neutral-900"
-            }`}
-          >
-            FILIPE LARA
-          </span>
+        <Link href="/" className="text-xl font-bold tracking-widest text-neutral-900 sm:text-2xl">
+          FILIPE LARA
         </Link>
 
         <nav className="hidden md:block">
-          <ul
-            className={`flex items-center gap-7 text-xs font-semibold uppercase tracking-widest ${
-              transparente ? "text-white/90" : "text-neutral-700"
-            }`}
-          >
+          <ul className="flex items-center gap-6 text-sm font-medium text-neutral-700">
             {linksNav.map((l) => (
               <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className={transparente ? "hover:text-emerald-300" : "hover:text-neutral-900"}
-                >
+                <Link href={l.href} className="hover:text-neutral-900">
                   {l.label}
                 </Link>
               </li>
@@ -83,22 +46,22 @@ export default function Header() {
           </ul>
         </nav>
 
-        <Link
-          href="/carrinho"
-          className={`relative flex items-center gap-1 text-sm ${
-            transparente ? "text-white" : "text-neutral-700 hover:text-neutral-900"
-          }`}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <Link href="/carrinho" className="relative flex items-center gap-1 text-sm text-neutral-700 hover:text-neutral-900">
+          <span className="hidden sm:inline">Carrinho</span>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="sm:hidden"
+          >
             <circle cx="9" cy="21" r="1" />
             <circle cx="20" cy="21" r="1" />
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
           </svg>
-          <span
-            className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs ${
-              transparente ? "bg-emerald-400 text-neutral-900" : "bg-neutral-900 text-white"
-            }`}
-          >
+          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-neutral-900 px-1 text-xs text-white">
             {quantidadeTotal}
           </span>
         </Link>
