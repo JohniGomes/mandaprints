@@ -37,16 +37,20 @@ export default function Hero() {
         <div ref={titleRef}>
           <h1 className="hero__title hero__title--d" style={{ fontWeight: 300 }}>
             <span className="reveal-text">
-              <span className="reveal-text__inner">Fotografias autorais para</span>
+              <span className="reveal-text__inner">Fotografias autorais</span>
             </span>
             <br />
             <span className="reveal-text">
-              <span className="reveal-text__inner">transformar suas paredes</span>
+              <span className="reveal-text__inner">Para transformar</span>
+            </span>
+            <br />
+            <span className="reveal-text">
+              <span className="reveal-text__inner">SUAS PAREDES</span>
             </span>
             <br />
             <span className="reveal-text">
               <span className="reveal-text__inner">
-                em <span style={{ color: "rgb(79, 216, 156)", fontWeight: 800 }}>vida.</span>
+                <span style={{ color: "rgb(79, 216, 156)", fontWeight: 800 }}>EM VIDA</span>
               </span>
             </span>
           </h1>
@@ -56,16 +60,16 @@ export default function Hero() {
             </span>
             <br />
             <span className="reveal-text">
-              <span className="reveal-text__inner">para transformar suas</span>
+              <span className="reveal-text__inner">Para transformar</span>
             </span>
             <br />
             <span className="reveal-text">
-              <span className="reveal-text__inner">paredes em</span>
+              <span className="reveal-text__inner">SUAS PAREDES</span>
             </span>
             <br />
             <span className="reveal-text">
               <span className="reveal-text__inner">
-                <span style={{ color: "rgb(79, 216, 156)", fontWeight: 800 }}>vida.</span>
+                <span style={{ color: "rgb(79, 216, 156)", fontWeight: 800 }}>EM VIDA</span>
               </span>
             </span>
           </h1>
