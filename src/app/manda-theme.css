@@ -1184,7 +1184,7 @@ body.menu-open .fwa { opacity: 0; pointer-events: none; }
   .hero__title--m { display: block; }
   .hero__meta-top { display: none; }
   .hero { min-height: 0; display: block; }
-  .hero__bg, .hero::after { bottom: auto; height: 100svh; }
+  .hero__bg, .hero::after { position: absolute; inset: 0; bottom: 0; height: auto; }
   .hero__content {
     min-height: 100svh; box-sizing: border-box;
     justify-content: flex-start;
