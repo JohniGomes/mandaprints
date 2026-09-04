@@ -208,7 +208,9 @@ export default function ProdutoDetalhe({ produto }: { produto: Product }) {
             </button>
           </div>
 
-          <p className="mt-8 text-sm leading-relaxed text-neutral-600">{produto.descricao}</p>
+          <p className="mt-8 whitespace-pre-line text-sm leading-relaxed text-neutral-600">
+            {produto.descricao}
+          </p>
         </ScrollReveal>
       </div>
     </div>
