@@ -1,5 +1,6 @@
 import Nav from "@/components/manda/Nav";
 import Hero from "@/components/manda/Hero";
+import CollectionsIntro from "@/components/manda/CollectionsIntro";
 import OldCatalog from "@/components/manda/OldCatalog";
 import About from "@/components/manda/About";
 import FinalCTA from "@/components/manda/FinalCTA";
@@ -12,6 +13,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <CollectionsIntro />
         <OldCatalog />
         <About />
         <FinalCTA />

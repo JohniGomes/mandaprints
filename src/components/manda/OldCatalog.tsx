@@ -5,12 +5,15 @@ import ScrollReveal from "@/components/ScrollReveal";
 
 export default function OldCatalog() {
   return (
-    <div id="colecoes" className="bg-white text-neutral-900">
-      <div id="galeria" />
-      {collections.map((colecao, idx) => {
+    <div id="galeria" className="bg-white text-neutral-900">
+      {collections.map((colecao) => {
         const produtos = getProductsByCollection(colecao.slug).slice(0, 8);
         return (
-          <section key={colecao.slug} className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
+          <section
+            key={colecao.slug}
+            id={colecao.slug}
+            className="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 lg:px-8"
+          >
             <ScrollReveal>
               <div className="mb-6 flex items-end justify-between">
                 <div>
