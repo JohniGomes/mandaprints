@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="foot__top">
         <div className="foot__brand">
           <div className="foot__wordmark">
-            Filipe<em>Lara</em>
+            Manda<em>Prints</em>
           </div>
           <div className="foot__sub">Fotografias autorais · Coleção de quadros decorativos</div>
         </div>

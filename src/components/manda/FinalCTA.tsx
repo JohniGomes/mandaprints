@@ -29,7 +29,6 @@ export default function FinalCTA() {
           </a>
           <a className="btn btn--ghost btn--lg" href={waUrl(MSG_GERAL)} target="_blank" rel="noreferrer">
             <span>Falar no WhatsApp</span>
-            <span className="btn__arrow">↗</span>
           </a>
         </div>
       </div>
