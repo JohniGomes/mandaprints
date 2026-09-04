@@ -319,7 +319,11 @@ body.menu-open .nav--scrolled {
 }
 
 /* âââ Hero âââ */
-.hero {
+.mp .hero, .hero {
+/* Especificidade extra (.mp .hero) para vencer ".mp section" e garantir
+   padding:0 de fato -- sem isso o hero herdava 64px de var(--pad-y) em
+   cima e embaixo, empurrando o titulo e deixando vao antes do fim da
+   tela mesmo com min-height:100dvh. */
   position: relative;
   max-width: none;
   padding: 0;
@@ -1193,7 +1197,12 @@ body.menu-open .fwa { opacity: 0; pointer-events: none; }
   .hero__bg, .hero::after { position: absolute; inset: 0; }
   .hero__content {
     min-height: 0; box-sizing: border-box;
-    margin: 0 auto; padding: 76px var(--pad-x) 24px;
+    /* Recuo fixo (proporcional a tela) empurra o titulo para a metade
+       inferior da foto, deixando o ceu livre no topo. A barra de
+       estatisticas continua com margin-top:auto e fica colada no fim
+       da tela (sem esse recuo competir pelo mesmo espaco). */
+    margin: 0 auto;
+    padding: 26vh var(--pad-x) 24px;
   }
   .hero__title { margin-bottom: 18px; }
   /* Barra de estatisticas empurrada para o fim da tela via flex; o espaco
