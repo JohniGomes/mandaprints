@@ -1210,13 +1210,15 @@ body.menu-open .fwa { opacity: 0; pointer-events: none; }
   .hero__meta-bottom {
     position: relative; left: 0; right: 0; z-index: 2;
     margin-top: auto;
-    grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 16px var(--pad-x);
+    grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px var(--pad-x);
     background: rgba(23,23,23,0.34); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
     border-top: 1px solid rgba(255,255,255,0.14);
   }
-  .hero__meta-cell { gap: 4px; }
-  .hero__meta-k { font-size: 8.5px; letter-spacing: 0.14em; }
-  .hero__meta-v { font-size: 15px; }
+  /* Faixa fina de uma linha so, igual a referencia do cliente. */
+  .hero__meta-cell { gap: 2px; overflow: hidden; }
+  .hero__meta-v { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hero__meta-k { font-size: 7.5px; letter-spacing: 0.1em; }
+  .hero__meta-v { font-size: 11px; }
   .gallery__grid,
   .gallery--dtight .gallery__grid,
   .gallery--dnormal .gallery__grid,
