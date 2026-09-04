@@ -41,11 +41,11 @@ export default function Hero() {
             </span>
             <br />
             <span className="reveal-text">
-              <span className="reveal-text__inner">Para transformar</span>
+              <span className="reveal-text__inner">para transformar</span>
             </span>
             <br />
             <span className="reveal-text">
-              <span className="reveal-text__inner">SUAS PAREDES</span>
+              <span className="reveal-text__inner">suas paredes</span>
             </span>
             <br />
             <span className="reveal-text">
@@ -60,11 +60,11 @@ export default function Hero() {
             </span>
             <br />
             <span className="reveal-text">
-              <span className="reveal-text__inner">Para transformar</span>
+              <span className="reveal-text__inner">para transformar</span>
             </span>
             <br />
             <span className="reveal-text">
-              <span className="reveal-text__inner">SUAS PAREDES</span>
+              <span className="reveal-text__inner">suas paredes</span>
             </span>
             <br />
             <span className="reveal-text">
