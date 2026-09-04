@@ -1195,21 +1195,24 @@ body.menu-open .fwa { opacity: 0; pointer-events: none; }
   .hero__title--m { display: block; }
   .hero__meta-top { display: none; }
   .hero__bg, .hero::after { position: absolute; inset: 0; }
-  /* Desce a foto no quadro (mostra mais ceu, empurra a montanha para
-     baixo) para o titulo ficar sobre o ceu em vez de sobre o relevo. */
-  .hero__photo { object-position: center 28%; }
+  /* Desce bem mais a foto no quadro (mostra bem mais ceu, empurra a
+     montanha para o rodape) para o titulo ficar bem acima do relevo. */
+  .hero__photo { object-position: center 14%; }
   .hero__content {
     min-height: 0; box-sizing: border-box;
-    /* Recuo menor: titulo mais proximo do topo/ceu, como pedido. */
+    /* Recuo minimo (so o suficiente pra nao entrar embaixo do nav fixo):
+       titulo colado no topo/ceu, como pedido. */
     margin: 0 auto;
-    padding: 13vh var(--pad-x) 24px;
+    padding: 90px var(--pad-x) 24px;
   }
   .hero__title { margin-bottom: 18px; }
   /* Barra de estatisticas empurrada para o fim da tela via flex; o espaco
-     excedente e preenchido pela foto/gradiente do hero, nao por vao preto. */
+     excedente e preenchido pela foto/gradiente do hero, nao por vao preto.
+     Um pequeno respiro no fim (margin-bottom) sobe a barra um pouco em
+     vez de ficar totalmente colada na borda. */
   .hero__meta-bottom {
     position: relative; left: 0; right: 0; z-index: 2;
-    margin-top: auto;
+    margin-top: auto; margin-bottom: 3vh;
     grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px var(--pad-x);
     background: rgba(23,23,23,0.34); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
     border-top: 1px solid rgba(255,255,255,0.14);
