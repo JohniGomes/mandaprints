@@ -25,7 +25,6 @@ export default function Hero() {
           className="hero__photo"
           src="/images/islandia/FLP03147.jpg"
           alt="Vestrahorn, Islândia — montanhas refletidas na água"
-          style={{ objectPosition: "center 40%" }}
         />
       </div>
 
