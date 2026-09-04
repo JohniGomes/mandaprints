@@ -15,8 +15,8 @@ export default function About() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="about__portrait-img"
-            src="/images/islandia/FLP03842.jpg"
-            alt="Filipe Lara em campo, na Islândia"
+            src="/images/filipe-lara-aurora.jpg"
+            alt="Filipe Lara sob a aurora boreal"
           />
           <div className="about__portrait-cap"></div>
         </div>
@@ -27,13 +27,16 @@ export default function About() {
             São <em>frames do mundo</em>.
           </h2>
           <p>
-            A Filipe Lara Fotografia reúne obras autorais em uma curadoria para ambientes que
-            pedem mais do que decoração: pedem história, atmosfera e presença.
+            O Filipe Lara reúne obras autorais em uma curadoria para ambientes que pedem mais
+            do que decoração: pedem história, atmosfera e presença.
           </p>
           <p>
-            Mais de 14 anos de estrada, 20+ países documentados e um olhar construído entre
-            viagens, esporte, ruas e grandes histórias. Cada obra é fruto de campo, espera e
-            escolha e chega à parede como um capítulo independente.
+            Mais de 15 anos de estrada, 20+ países documentados e um olhar construído entre
+            viagens, esporte, ruas e grandes histórias.
+          </p>
+          <p>
+            Cada obra nasce do campo, da espera e de uma escolha. E chega à parede como um
+            capítulo único, carregando uma história independente.
           </p>
           <div className="about__chips">
             <div className="chip">3 coleções públicas</div>

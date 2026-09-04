@@ -44,7 +44,7 @@ export default function Nav() {
           <span />
         </span>
         <div className="nav__wordmark">
-          <span className="nav__word">FILIPE LARA</span>
+          <span className="nav__word">MANDA PRINTS</span>
           <span className="nav__sub">Quadros decorativos</span>
         </div>
       </Link>
