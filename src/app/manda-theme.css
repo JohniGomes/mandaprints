@@ -1183,59 +1183,33 @@ body.menu-open .fwa { opacity: 0; pointer-events: none; }
   .nav__sub { display: none; }
   .nav__burger { display: flex; }
   .nav__drawer { display: flex; }
-  .hero {
-    /* Preenche exatamente a primeira tela (vh como fallback, dvh corrige
-       a barra de endereco dinamica) para nao sobrar espaco preto nem
-       deixar o proximo modulo (Colecoes) espiar no carregamento. */
-    min-height: 100vh; min-height: 100dvh;
-    display: flex; flex-direction: column;
-  }
+  /* Bloco identico ao site de referencia (mandaprints.com.br) —
+     a foto do hero la e um recorte quase quadrado (2200x2154, com
+     bastante ceu acima da montanha), por isso object-position sozinho
+     ja funciona sem precisar de zoom/gradiente extra. Usamos aqui a
+     mesma imagem e o mesmo CSS, 1:1. */
+  .hero { min-height: 0; display: block; }
   .hero__title { font-size: clamp(34px, 9vw, 48px); transform: none; }
   .hero__title--d { display: none; }
   .hero__title--m { display: block; }
   .hero__meta-top { display: none; }
-  .hero__bg, .hero::after { position: absolute; inset: 0; }
-  /* A foto e paisagem (bem mais larga que alta): com object-fit:cover
-     normal, a altura da imagem exatamente preenche a tela sem sobrar
-     nenhuma folga vertical, entao object-position sozinho quase nao
-     move nada. Solucao: dar zoom (scale) ancorado no TOPO (transform-
-     origin:top), que mantem o ceu fixo no topo da tela e empurra a
-     montanha (e o resto) pra baixo, saindo de cena. */
-  .hero__photo {
-    object-position: center top;
-    transform: scale(1.8);
-    transform-origin: top center;
-  }
-  /* Degrade proprio por cima do ceu (mais escuro no topo, some no meio)
-     pra dar contraste ao texto, como na referencia do cliente. */
-  .hero::after {
-    background:
-      linear-gradient(180deg, rgba(8,14,22,0.78) 0%, rgba(8,14,22,0.42) 30%, rgba(23,23,23,0.16) 50%, rgba(23,23,23,0.55) 78%, rgba(23,23,23,0.97) 100%);
-  }
+  .hero__bg, .hero::after { bottom: auto; height: 100svh; }
   .hero__content {
-    min-height: 0; box-sizing: border-box;
-    /* Recuo minimo (so o suficiente pra nao entrar embaixo do nav fixo):
-       titulo colado no topo/ceu, como pedido. */
-    margin: 0 auto;
-    padding: 78px var(--pad-x) 24px;
+    min-height: 100svh; box-sizing: border-box;
+    justify-content: flex-start;
+    /* Keep lettering + CTA up in the sky, clear of the mountains */
+    margin: 0 auto; padding: 90px var(--pad-x) 40px;
   }
-  .hero__title { margin-bottom: 18px; }
-  /* Barra de estatisticas empurrada para o fim da tela via flex; o espaco
-     excedente e preenchido pela foto/gradiente do hero, nao por vao preto.
-     Um pequeno respiro no fim (margin-bottom) sobe a barra um pouco em
-     vez de ficar totalmente colada na borda. */
+  /* Stats band pinned to the bottom of the first screen — visible on load */
   .hero__meta-bottom {
-    position: relative; left: 0; right: 0; z-index: 2;
-    margin-top: auto; margin-bottom: 3vh;
-    grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px var(--pad-x);
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+    grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 22px var(--pad-x);
     background: rgba(23,23,23,0.34); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
     border-top: 1px solid rgba(255,255,255,0.14);
   }
-  /* Faixa fina de uma linha so, igual a referencia do cliente. */
-  .hero__meta-cell { gap: 2px; overflow: hidden; }
-  .hero__meta-v { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .hero__meta-k { font-size: 7.5px; letter-spacing: 0.1em; }
-  .hero__meta-v { font-size: 11px; }
+  .hero__meta-cell { gap: 4px; }
+  .hero__meta-k { font-size: 8.5px; letter-spacing: 0.14em; }
+  .hero__meta-v { font-size: 15px; }
   .gallery__grid,
   .gallery--dtight .gallery__grid,
   .gallery--dnormal .gallery__grid,

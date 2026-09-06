@@ -23,7 +23,7 @@ export default function Hero() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="hero__photo"
-          src="/images/islandia/FLP03147.jpg"
+          src="/images/islandia/vestrahorn-hero-ceu.jpg"
           alt="Vestrahorn, Islândia — montanhas refletidas na água"
         />
       </div>
