@@ -1202,7 +1202,7 @@ body.menu-open .fwa { opacity: 0; pointer-events: none; }
   }
   /* Stats band pinned to the bottom of the first screen — visible on load */
   .hero__meta-bottom {
-    position: absolute; left: 0; right: 0; bottom: 14px; z-index: 2;
+    position: absolute; left: 0; right: 0; bottom: 40px; z-index: 2;
     grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 22px var(--pad-x);
     background: rgba(23,23,23,0.34); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
     border-top: 1px solid rgba(255,255,255,0.14);
