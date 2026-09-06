@@ -1195,10 +1195,17 @@ body.menu-open .fwa { opacity: 0; pointer-events: none; }
   .hero__title--m { display: block; }
   .hero__meta-top { display: none; }
   .hero__bg, .hero::after { position: absolute; inset: 0; }
-  /* Desce bem mais a foto no quadro (mostra so o ceu no topo, empurra a
-     montanha quase pra fora da tela) para o titulo ficar todo sobre o
-     ceu, bem acima do relevo. */
-  .hero__photo { object-position: center 4%; }
+  /* A foto e paisagem (bem mais larga que alta): com object-fit:cover
+     normal, a altura da imagem exatamente preenche a tela sem sobrar
+     nenhuma folga vertical, entao object-position sozinho quase nao
+     move nada. Solucao: dar zoom (scale) ancorado no TOPO (transform-
+     origin:top), que mantem o ceu fixo no topo da tela e empurra a
+     montanha (e o resto) pra baixo, saindo de cena. */
+  .hero__photo {
+    object-position: center top;
+    transform: scale(1.8);
+    transform-origin: top center;
+  }
   /* Degrade proprio por cima do ceu (mais escuro no topo, some no meio)
      pra dar contraste ao texto, como na referencia do cliente. */
   .hero::after {
