@@ -1195,15 +1195,22 @@ body.menu-open .fwa { opacity: 0; pointer-events: none; }
   .hero__title--m { display: block; }
   .hero__meta-top { display: none; }
   .hero__bg, .hero::after { position: absolute; inset: 0; }
-  /* Desce bem mais a foto no quadro (mostra bem mais ceu, empurra a
-     montanha para o rodape) para o titulo ficar bem acima do relevo. */
-  .hero__photo { object-position: center 14%; }
+  /* Desce bem mais a foto no quadro (mostra so o ceu no topo, empurra a
+     montanha quase pra fora da tela) para o titulo ficar todo sobre o
+     ceu, bem acima do relevo. */
+  .hero__photo { object-position: center 4%; }
+  /* Degrade proprio por cima do ceu (mais escuro no topo, some no meio)
+     pra dar contraste ao texto, como na referencia do cliente. */
+  .hero::after {
+    background:
+      linear-gradient(180deg, rgba(8,14,22,0.78) 0%, rgba(8,14,22,0.42) 30%, rgba(23,23,23,0.16) 50%, rgba(23,23,23,0.55) 78%, rgba(23,23,23,0.97) 100%);
+  }
   .hero__content {
     min-height: 0; box-sizing: border-box;
     /* Recuo minimo (so o suficiente pra nao entrar embaixo do nav fixo):
        titulo colado no topo/ceu, como pedido. */
     margin: 0 auto;
-    padding: 90px var(--pad-x) 24px;
+    padding: 78px var(--pad-x) 24px;
   }
   .hero__title { margin-bottom: 18px; }
   /* Barra de estatisticas empurrada para o fim da tela via flex; o espaco
