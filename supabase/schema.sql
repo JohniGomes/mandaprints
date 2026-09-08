@@ -20,6 +20,9 @@ create table if not exists pedidos (
 -- adicionadas, este bloco garante que elas sejam criadas sem duplicar erro.
 alter table pedidos add column if not exists endereco jsonb;
 alter table pedidos add column if not exists cliente_telefone text;
+alter table pedidos add column if not exists codigo_rastreio text;
+alter table pedidos add column if not exists transportadora text;
+alter table pedidos add column if not exists enviado_em timestamptz;
 
 create index if not exists idx_pedidos_preference_id on pedidos (mercadopago_preference_id);
 create index if not exists idx_pedidos_payment_id on pedidos (mercadopago_payment_id);
