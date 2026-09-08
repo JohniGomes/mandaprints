@@ -218,7 +218,7 @@ export default function CarrinhoPage() {
           />
           <input
             type="text"
-            placeholder="CPF (necessário para pagamento via Pix)"
+            placeholder="CPF"
             value={endereco.cpf}
             onChange={(e) => atualizarCampo("cpf", e.target.value)}
             className="rounded border border-neutral-300 px-3 py-2 text-sm sm:col-span-2"
