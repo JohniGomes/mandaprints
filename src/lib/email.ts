@@ -2,8 +2,13 @@
  * Envio de e-mails transacionais via Resend (https://resend.com).
  *
  * Requer a variável de ambiente RESEND_API_KEY.
- * Troque o "from" pelo domínio verificado no Resend assim que o Filipe
- * definir o domínio final do e-commerce.
+ *
+ * O remetente abaixo é o domínio de teste do próprio Resend
+ * (onboarding@resend.dev) — funciona sem verificar domínio próprio, mas
+ * o Resend só entrega para o e-mail que criou a conta (modo sandbox).
+ * Assim que um domínio (ex: mandaprints.com.br) for verificado em
+ * resend.com/domains, troque REMETENTE_PADRAO por algo como
+ * "pedidos@mandaprints.com.br" para poder enviar para qualquer cliente.
  */
 
 interface EnviarEmailParams {
@@ -12,7 +17,7 @@ interface EnviarEmailParams {
   html: string;
 }
 
-const REMETENTE_PADRAO = "pedidos@filipelarafotografia.com.br";
+const REMETENTE_PADRAO = "onboarding@resend.dev";
 
 export async function enviarEmail({ para, assunto, html }: EnviarEmailParams) {
   const apiKey = process.env.RESEND_API_KEY;
