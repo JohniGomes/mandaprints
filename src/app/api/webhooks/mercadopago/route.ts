@@ -10,6 +10,8 @@ interface PedidoRow {
   frete: { nome: string; preco: number; prazo?: string } | null;
   endereco: EnderecoEntrega | null;
   total: number;
+  cliente_nome: string | null;
+  cliente_email: string | null;
 }
 
 function formatarPreco(valor: number) {
@@ -47,14 +49,19 @@ function enderecoHtml(endereco: EnderecoEntrega | null) {
 /**
  * Webhook do Mercado Pago.
  *
- * Configurar em: mercadopago.com.br/developers/panel > sua aplicação >
- * Webhooks > URL: https://SEU_DOMINIO/api/webhooks/mercadopago
+ * O notification_url é enviado por preferência (veja checkout/route.ts),
+ * então não é preciso configurar nada manualmente no painel do Mercado
+ * Pago para esta integração funcionar.
  *
  * Quando um pagamento é aprovado, o Mercado Pago envia um POST com o id do
- * pagamento. A partir desse id buscamos o pagamento na API do MP (para saber
- * se foi aprovado) e o pedido completo no Supabase (itens com variantes,
- * frete e endereço de entrega), e disparamos 3 e-mails: cliente, você
- * (dono da loja) e o fornecedor que produz e despacha.
+ * pagamento. A partir desse id buscamos o pagamento na API do MP (para
+ * saber se foi aprovado) e localizamos o pedido completo no Supabase pelo
+ * "external_reference" — o id do próprio pedido no nosso banco, enviado na
+ * criação da preferência. NÃO usar pagamento.order?.id (é o id do
+ * merchant_order, não bate com nada que a gente guarda) nem confiar no
+ * e-mail devolvido em pagamento.payer?.email (o Mercado Pago costuma
+ * mascará-lo, tipo "XXXXXXXXXXX") — o e-mail e nome usados nos avisos vêm
+ * do que o próprio cliente preencheu no nosso formulário de entrega.
  *
  * Variáveis de ambiente necessárias:
  * - MERCADOPAGO_ACCESS_TOKEN
@@ -88,36 +95,34 @@ export async function POST(req: NextRequest) {
   }
 
   const pagamento = await pagamentoResp.json();
-  const preferenceId: string | undefined = pagamento.order?.id ?? pagamento.metadata?.preference_id;
-
-  const clienteEmail: string | undefined = pagamento.payer?.email;
-  const clienteNome: string = pagamento.payer?.first_name || "Cliente";
+  const externalReference: string | undefined = pagamento.external_reference || undefined;
 
   let pedido: PedidoRow | null = null;
 
   try {
     const supabase = getSupabaseServerClient();
 
-    // O pedido é identificado pela preferência até este webhook chegar; a
-    // partir daqui também guardamos o payment_id, então tentamos os dois
-    // critérios (a primeira notificação só tem a preferência disponível).
     const dadosAtualizados = {
       status: pagamento.status === "approved" ? "aprovado" : pagamento.status,
       mercadopago_payment_id: String(paymentId),
-      cliente_email: clienteEmail ?? null,
       updated_at: new Date().toISOString(),
     };
 
-    let query = supabase.from("pedidos").update(dadosAtualizados);
-    query = preferenceId
-      ? query.eq("mercadopago_preference_id", String(preferenceId))
-      : query.eq("mercadopago_payment_id", String(paymentId));
+    if (externalReference) {
+      const { data } = await supabase
+        .from("pedidos")
+        .update(dadosAtualizados)
+        .eq("id", externalReference)
+        .select()
+        .maybeSingle();
+      pedido = (data as PedidoRow) ?? null;
+    }
 
-    const { data } = await query.select().maybeSingle();
-    pedido = (data as PedidoRow) ?? null;
-
-    // Fallback: primeira tentativa não encontrou por preferência (ex.: id
-    // mudou de forma) — tenta de novo pelo payment_id direto.
+    // Fallback para pedidos criados antes do external_reference existir:
+    // tenta pelo id da preferência (que o MP nao devolve mais no payload
+    // do pagamento, mas fica salvo no nosso registro) via payment_id ja
+    // gravado numa notificacao anterior, ou casamento por preference_id
+    // se o campo "order" antigo ainda apontar pra ele em contas legadas.
     if (!pedido) {
       const { data: dataFallback } = await supabase
         .from("pedidos")
@@ -140,10 +145,14 @@ export async function POST(req: NextRequest) {
   const frete = pedido?.frete ?? null;
   const endereco = pedido?.endereco ?? null;
   const valorTotal = pedido?.total ?? pagamento.transaction_amount;
+  // Preferimos os dados que o proprio cliente preencheu no nosso
+  // formulario — o retorno do Mercado Pago costuma mascarar o e-mail.
+  const clienteEmail = pedido?.cliente_email || undefined;
+  const clienteNome = pedido?.cliente_nome || "Cliente";
 
   const resumoItens = itens.length
     ? listaItensHtml(itens)
-    : `<p>${pagamento.description || "Pedido Filipe Lara Fotografia"}</p>`;
+    : `<p>${pagamento.description || "Pedido Manda Prints"}</p>`;
 
   const resumoFrete = frete
     ? `<p><b>Frete:</b> ${frete.nome} — ${formatarPreco(frete.preco)}${frete.prazo ? ` (prazo estimado ${frete.prazo})` : ""}</p>`
@@ -155,7 +164,7 @@ export async function POST(req: NextRequest) {
     envios.push(
       enviarEmail({
         para: clienteEmail,
-        assunto: "Confirmação do seu pedido — Filipe Lara Fotografia",
+        assunto: "Confirmação do seu pedido — Manda Prints",
         html: `
           <h2>Obrigado pela sua compra, ${clienteNome}!</h2>
           <p>Seu pagamento foi aprovado e seu pedido já está sendo preparado.</p>
