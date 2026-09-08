@@ -3,42 +3,107 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
+import { EnderecoEntrega } from "@/lib/types";
 
 function formatarPreco(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+const ENDERECO_VAZIO: EnderecoEntrega = {
+  nome: "",
+  telefone: "",
+  cep: "",
+  rua: "",
+  numero: "",
+  complemento: "",
+  bairro: "",
+  cidade: "",
+  uf: "",
+};
+
 export default function CarrinhoPage() {
   const { itens, remover, atualizarQuantidade, total } = useCart();
-  const [cep, setCep] = useState("");
+  const [endereco, setEndereco] = useState<EnderecoEntrega>(ENDERECO_VAZIO);
+  const [buscandoCep, setBuscandoCep] = useState(false);
   const [frete, setFrete] = useState<{ nome: string; preco: number; prazo: string } | null>(null);
   const [carregandoFrete, setCarregandoFrete] = useState(false);
+  const [erroFrete, setErroFrete] = useState<string | null>(null);
   const [finalizando, setFinalizando] = useState(false);
 
-  async function calcularFrete() {
-    if (cep.replace(/\D/g, "").length !== 8) return;
+  function atualizarCampo<K extends keyof EnderecoEntrega>(campo: K, valor: string) {
+    setEndereco((atual) => ({ ...atual, [campo]: valor }));
+    if (campo === "cep") {
+      setFrete(null);
+      setErroFrete(null);
+    }
+  }
+
+  async function buscarCep(cepDigitado: string) {
+    const cepLimpo = cepDigitado.replace(/\D/g, "");
+    if (cepLimpo.length !== 8) return;
+    setBuscandoCep(true);
+    try {
+      const resp = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+      const data = await resp.json();
+      if (!data.erro) {
+        setEndereco((atual) => ({
+          ...atual,
+          rua: data.logradouro || atual.rua,
+          bairro: data.bairro || atual.bairro,
+          cidade: data.localidade || atual.cidade,
+          uf: data.uf || atual.uf,
+        }));
+      }
+      await calcularFrete(cepLimpo);
+    } catch {
+      // ViaCEP fora do ar — cliente ainda pode preencher manualmente.
+    } finally {
+      setBuscandoCep(false);
+    }
+  }
+
+  async function calcularFrete(cepLimpo: string) {
     setCarregandoFrete(true);
-    setFrete(null);
+    setErroFrete(null);
     try {
       const resp = await fetch("/api/frete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cepDestino: cep }),
+        body: JSON.stringify({ cepDestino: cepLimpo }),
       });
       const data = await resp.json();
-      setFrete(data.opcoes?.[0] ?? null);
+      if (data.opcoes?.[0]) {
+        setFrete(data.opcoes[0]);
+      } else {
+        setErroFrete("Não foi possível calcular o frete para esse CEP.");
+      }
+    } catch {
+      setErroFrete("Não foi possível calcular o frete para esse CEP.");
     } finally {
       setCarregandoFrete(false);
     }
   }
 
+  const enderecoCompleto =
+    endereco.nome.trim() &&
+    endereco.telefone.trim() &&
+    endereco.cep.replace(/\D/g, "").length === 8 &&
+    endereco.rua.trim() &&
+    endereco.numero.trim() &&
+    endereco.bairro.trim() &&
+    endereco.cidade.trim() &&
+    endereco.uf.trim();
+
+  const podeFinalizar = Boolean(enderecoCompleto && frete && !finalizando);
+
   async function finalizarCompra() {
+    if (!podeFinalizar) return;
     setFinalizando(true);
     try {
       const resp = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itens, frete }),
+        body: JSON.stringify({ itens, frete, endereco }),
       });
       const data = await resp.json();
       if (data.init_point) {
@@ -108,30 +173,98 @@ export default function CarrinhoPage() {
         ))}
       </div>
 
-      {/* Frete */}
+      {/* Endereço de entrega */}
       <div className="mt-8 rounded-lg border border-neutral-200 p-4">
-        <h3 className="text-sm font-semibold text-neutral-900">Calcular frete</h3>
-        <div className="mt-2 flex gap-2">
+        <h3 className="text-sm font-semibold text-neutral-900">Endereço de entrega</h3>
+        <p className="mt-1 text-xs text-neutral-500">
+          Seu pedido é produzido e enviado diretamente pelo fornecedor — preencha o endereço
+          completo para calcularmos o frete e garantirmos a entrega correta.
+        </p>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input
             type="text"
-            placeholder="Digite seu CEP"
-            value={cep}
-            onChange={(e) => setCep(e.target.value)}
-            className="w-40 rounded border border-neutral-300 px-3 py-2 text-sm"
+            placeholder="Nome completo"
+            value={endereco.nome}
+            onChange={(e) => atualizarCampo("nome", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm sm:col-span-2"
           />
-          <button
-            onClick={calcularFrete}
-            disabled={carregandoFrete}
-            className="rounded border border-neutral-900 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-100"
-          >
-            {carregandoFrete ? "Calculando..." : "Calcular"}
-          </button>
+          <input
+            type="tel"
+            placeholder="Telefone / WhatsApp"
+            value={endereco.telefone}
+            onChange={(e) => atualizarCampo("telefone", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm"
+          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="CEP"
+              value={endereco.cep}
+              onChange={(e) => atualizarCampo("cep", e.target.value)}
+              onBlur={(e) => buscarCep(e.target.value)}
+              className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            />
+            {buscandoCep && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400">
+                buscando...
+              </span>
+            )}
+          </div>
+          <input
+            type="text"
+            placeholder="Rua"
+            value={endereco.rua}
+            onChange={(e) => atualizarCampo("rua", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm sm:col-span-2"
+          />
+          <input
+            type="text"
+            placeholder="Número"
+            value={endereco.numero}
+            onChange={(e) => atualizarCampo("numero", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="Complemento (opcional)"
+            value={endereco.complemento}
+            onChange={(e) => atualizarCampo("complemento", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="Bairro"
+            value={endereco.bairro}
+            onChange={(e) => atualizarCampo("bairro", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="Cidade"
+            value={endereco.cidade}
+            onChange={(e) => atualizarCampo("cidade", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="UF"
+            maxLength={2}
+            value={endereco.uf}
+            onChange={(e) => atualizarCampo("uf", e.target.value.toUpperCase())}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm"
+          />
         </div>
+
+        {carregandoFrete && (
+          <p className="mt-3 text-sm text-neutral-500">Calculando frete...</p>
+        )}
         {frete && (
-          <p className="mt-2 text-sm text-neutral-700">
-            {frete.nome}: {formatarPreco(frete.preco)} — prazo estimado {frete.prazo}
+          <p className="mt-3 text-sm text-neutral-700">
+            Frete: {frete.nome} — {formatarPreco(frete.preco)} · prazo estimado {frete.prazo}
           </p>
         )}
+        {erroFrete && <p className="mt-3 text-sm text-red-600">{erroFrete}</p>}
       </div>
 
       {/* Resumo */}
@@ -143,11 +276,14 @@ export default function CarrinhoPage() {
         </p>
         <button
           onClick={finalizarCompra}
-          disabled={finalizando}
-          className="mt-2 rounded-full bg-neutral-900 px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-800 disabled:opacity-50"
+          disabled={!podeFinalizar}
+          className="mt-2 rounded-full bg-neutral-900 px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {finalizando ? "Redirecionando..." : "Finalizar Compra (Mercado Pago)"}
         </button>
+        {!enderecoCompleto && (
+          <p className="text-xs text-neutral-400">Preencha o endereço de entrega para continuar.</p>
+        )}
       </div>
     </div>
   );

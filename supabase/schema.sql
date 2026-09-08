@@ -7,12 +7,19 @@ create table if not exists pedidos (
   status text not null default 'pendente', -- pendente | aprovado | rejeitado
   itens jsonb not null,
   frete jsonb,
+  endereco jsonb,
   total numeric(10, 2) not null,
   cliente_nome text,
   cliente_email text,
+  cliente_telefone text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Idempotente: se a tabela "pedidos" já existia antes destas colunas serem
+-- adicionadas, este bloco garante que elas sejam criadas sem duplicar erro.
+alter table pedidos add column if not exists endereco jsonb;
+alter table pedidos add column if not exists cliente_telefone text;
 
 create index if not exists idx_pedidos_preference_id on pedidos (mercadopago_preference_id);
 create index if not exists idx_pedidos_payment_id on pedidos (mercadopago_payment_id);

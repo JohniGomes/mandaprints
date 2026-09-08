@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CartItem } from "@/lib/cart-context";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { EnderecoEntrega } from "@/lib/types";
 
 /**
  * Cria uma preferência de pagamento no Mercado Pago (Checkout Pro) e devolve
@@ -22,6 +23,7 @@ export async function POST(req: NextRequest) {
   const body = (await req.json()) as {
     itens: CartItem[];
     frete: { nome: string; preco: number } | null;
+    endereco: EnderecoEntrega;
   };
 
   const items = body.itens.map((item) => ({
@@ -50,6 +52,10 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify({
       items,
+      payer: {
+        name: body.endereco?.nome,
+        phone: body.endereco?.telefone ? { number: body.endereco.telefone } : undefined,
+      },
       back_urls: {
         success: `${baseUrl}/pedido/sucesso`,
         failure: `${baseUrl}/pedido/erro`,
@@ -78,7 +84,10 @@ export async function POST(req: NextRequest) {
       status: "pendente",
       itens: body.itens,
       frete: body.frete,
+      endereco: body.endereco,
       total,
+      cliente_nome: body.endereco?.nome ?? null,
+      cliente_telefone: body.endereco?.telefone ?? null,
     });
   } catch (err) {
     // Não bloqueia o checkout se o Supabase ainda não estiver configurado —

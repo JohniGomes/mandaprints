@@ -1,6 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enviarEmail } from "@/lib/email";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { CartItem } from "@/lib/cart-context";
+import { EnderecoEntrega } from "@/lib/types";
+
+interface PedidoRow {
+  id: string;
+  itens: CartItem[];
+  frete: { nome: string; preco: number; prazo?: string } | null;
+  endereco: EnderecoEntrega | null;
+  total: number;
+}
+
+function formatarPreco(valor: number) {
+  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function listaItensHtml(itens: CartItem[]) {
+  return `
+    <ul>
+      ${itens
+        .map(
+          (item) => `
+        <li>
+          <b>${item.quantidade}x ${item.nome}</b> — ${item.tamanho}, ${item.moldura}, ${item.acabamento}
+          (${formatarPreco(item.preco)} cada)
+        </li>`
+        )
+        .join("")}
+    </ul>
+  `;
+}
+
+function enderecoHtml(endereco: EnderecoEntrega | null) {
+  if (!endereco) return "<p><i>Endereço não informado.</i></p>";
+  return `
+    <p>
+      ${endereco.nome} — ${endereco.telefone}<br/>
+      ${endereco.rua}, ${endereco.numero}${endereco.complemento ? " — " + endereco.complemento : ""}<br/>
+      ${endereco.bairro} — ${endereco.cidade}/${endereco.uf}<br/>
+      CEP: ${endereco.cep}
+    </p>
+  `;
+}
 
 /**
  * Webhook do Mercado Pago.
@@ -9,13 +51,15 @@ import { getSupabaseServerClient } from "@/lib/supabase";
  * Webhooks > URL: https://SEU_DOMINIO/api/webhooks/mercadopago
  *
  * Quando um pagamento é aprovado, o Mercado Pago envia um POST com o id do
- * pagamento. A partir desse id, buscamos os detalhes na API e disparamos os
- * e-mails automáticos para: cliente final, Filipe (dono da loja) e fornecedor.
+ * pagamento. A partir desse id buscamos o pagamento na API do MP (para saber
+ * se foi aprovado) e o pedido completo no Supabase (itens com variantes,
+ * frete e endereço de entrega), e disparamos 3 e-mails: cliente, você
+ * (dono da loja) e o fornecedor que produz e despacha.
  *
  * Variáveis de ambiente necessárias:
  * - MERCADOPAGO_ACCESS_TOKEN
- * - EMAIL_LOJA (e-mail do Filipe, para onde vai o aviso de nova venda)
- * - EMAIL_FORNECEDOR (e-mail do fornecedor, para onde vai a ficha de produção)
+ * - EMAIL_LOJA (e-mail de quem recebe o aviso de nova venda)
+ * - EMAIL_FORNECEDOR (e-mail de quem recebe a ficha de produção/envio)
  */
 export async function POST(req: NextRequest) {
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
@@ -44,37 +88,44 @@ export async function POST(req: NextRequest) {
   }
 
   const pagamento = await pagamentoResp.json();
+  const preferenceId: string | undefined = pagamento.order?.id ?? pagamento.metadata?.preference_id;
 
-  const preferenceId = pagamento.order?.id ?? pagamento.metadata?.preference_id;
+  const clienteEmail: string | undefined = pagamento.payer?.email;
+  const clienteNome: string = pagamento.payer?.first_name || "Cliente";
+
+  let pedido: PedidoRow | null = null;
 
   try {
     const supabase = getSupabaseServerClient();
-    const update = supabase
-      .from("pedidos")
-      .update({
-        status: pagamento.status === "approved" ? "aprovado" : pagamento.status,
-        mercadopago_payment_id: String(paymentId),
-        cliente_nome: pagamento.payer?.first_name ?? null,
-        cliente_email: pagamento.payer?.email ?? null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("mercadopago_payment_id", String(paymentId));
 
-    // Na primeira atualização o pedido ainda está identificado pela preferência,
-    // não pelo payment_id — tenta os dois critérios.
-    if (preferenceId) {
-      await supabase
+    // O pedido é identificado pela preferência até este webhook chegar; a
+    // partir daqui também guardamos o payment_id, então tentamos os dois
+    // critérios (a primeira notificação só tem a preferência disponível).
+    const dadosAtualizados = {
+      status: pagamento.status === "approved" ? "aprovado" : pagamento.status,
+      mercadopago_payment_id: String(paymentId),
+      cliente_email: clienteEmail ?? null,
+      updated_at: new Date().toISOString(),
+    };
+
+    let query = supabase.from("pedidos").update(dadosAtualizados);
+    query = preferenceId
+      ? query.eq("mercadopago_preference_id", String(preferenceId))
+      : query.eq("mercadopago_payment_id", String(paymentId));
+
+    const { data } = await query.select().maybeSingle();
+    pedido = (data as PedidoRow) ?? null;
+
+    // Fallback: primeira tentativa não encontrou por preferência (ex.: id
+    // mudou de forma) — tenta de novo pelo payment_id direto.
+    if (!pedido) {
+      const { data: dataFallback } = await supabase
         .from("pedidos")
-        .update({
-          status: pagamento.status === "approved" ? "aprovado" : pagamento.status,
-          mercadopago_payment_id: String(paymentId),
-          cliente_nome: pagamento.payer?.first_name ?? null,
-          cliente_email: pagamento.payer?.email ?? null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("mercadopago_preference_id", String(preferenceId));
-    } else {
-      await update;
+        .update(dadosAtualizados)
+        .eq("mercadopago_payment_id", String(paymentId))
+        .select()
+        .maybeSingle();
+      pedido = (dataFallback as PedidoRow) ?? null;
     }
   } catch (err) {
     console.error("Falha ao atualizar pedido no Supabase:", err);
@@ -85,16 +136,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ recebido: true, status: pagamento.status });
   }
 
-  const clienteEmail = pagamento.payer?.email;
-  const clienteNome = pagamento.payer?.first_name || "Cliente";
-  const valorTotal = pagamento.transaction_amount;
-  const descricaoItens = pagamento.description || "Pedido Filipe Lara Fotografia";
+  const itens = pedido?.itens ?? [];
+  const frete = pedido?.frete ?? null;
+  const endereco = pedido?.endereco ?? null;
+  const valorTotal = pedido?.total ?? pagamento.transaction_amount;
 
-  const resumoPedido = `
-    <p><b>Pedido:</b> ${descricaoItens}</p>
-    <p><b>Valor total:</b> R$ ${Number(valorTotal).toFixed(2)}</p>
-    <p><b>ID do pagamento:</b> ${paymentId}</p>
-  `;
+  const resumoItens = itens.length
+    ? listaItensHtml(itens)
+    : `<p>${pagamento.description || "Pedido Filipe Lara Fotografia"}</p>`;
+
+  const resumoFrete = frete
+    ? `<p><b>Frete:</b> ${frete.nome} — ${formatarPreco(frete.preco)}${frete.prazo ? ` (prazo estimado ${frete.prazo})` : ""}</p>`
+    : "";
 
   const envios = [];
 
@@ -106,7 +159,11 @@ export async function POST(req: NextRequest) {
         html: `
           <h2>Obrigado pela sua compra, ${clienteNome}!</h2>
           <p>Seu pagamento foi aprovado e seu pedido já está sendo preparado.</p>
-          ${resumoPedido}
+          ${resumoItens}
+          ${resumoFrete}
+          <p><b>Valor total:</b> ${formatarPreco(Number(valorTotal))}</p>
+          <p>Entrega em:</p>
+          ${enderecoHtml(endereco)}
           <p>Em breve você receberá o certificado da obra e o código de rastreio.</p>
         `,
       })
@@ -117,11 +174,14 @@ export async function POST(req: NextRequest) {
     envios.push(
       enviarEmail({
         para: emailLoja,
-        assunto: `Nova venda aprovada — ${descricaoItens}`,
+        assunto: `Venda realizada — ${formatarPreco(Number(valorTotal))}`,
         html: `
-          <h2>Nova venda aprovada!</h2>
+          <h2>Venda realizada!</h2>
           <p><b>Cliente:</b> ${clienteNome} (${clienteEmail ?? "e-mail não informado"})</p>
-          ${resumoPedido}
+          ${resumoItens}
+          ${resumoFrete}
+          <p><b>Valor total:</b> ${formatarPreco(Number(valorTotal))}</p>
+          <p><b>ID do pagamento:</b> ${paymentId}</p>
         `,
       })
     );
@@ -131,14 +191,14 @@ export async function POST(req: NextRequest) {
     envios.push(
       enviarEmail({
         para: emailFornecedor,
-        assunto: `Novo pedido para produção — ${descricaoItens}`,
+        assunto: "Novo pedido para produção e envio",
         html: `
           <h2>Novo pedido para produção e envio</h2>
-          ${resumoPedido}
-          <p>Cliente: ${clienteNome} (${clienteEmail ?? "e-mail não informado"})</p>
-          <p><i>Endereço de entrega e detalhes de moldura/tamanho: integrar com os dados
-          completos do pedido (endpoint /v1/payments traz apenas o resumo — os detalhes
-          de variantes ficam salvos no pedido no seu banco de dados).</i></p>
+          ${resumoItens}
+          <p><b>Cliente:</b> ${clienteNome} (${clienteEmail ?? "e-mail não informado"})</p>
+          <p><b>Endereço de entrega:</b></p>
+          ${enderecoHtml(endereco)}
+          ${resumoFrete}
         `,
       })
     );
