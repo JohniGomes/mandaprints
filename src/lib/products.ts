@@ -276,10 +276,31 @@ const fotosNyc: FotoInfo[] = [
     },
 ];
 
+// Produto interno para testar o checkout em produção sem gastar quase
+// nada (R$ 0,10). Não aparece em nenhuma coleção/galeria — só acessível
+// direto pela URL /produtos/teste-checkout. Remover quando não precisar mais.
+const variantesTeste: ProductVariants = {
+  tamanhos: [{ id: "unico", label: "Tamanho único" }],
+  molduras: [{ id: "sem-moldura", label: "Sem moldura" }],
+  acabamentos: [{ id: "sem-vidro", label: "Sem vidro" }],
+};
+
+const produtoTeste: Product = {
+  slug: "teste-checkout",
+  nome: "[TESTE] Produto de 10 centavos",
+  colecao: "teste-interno",
+  referencia: "FL-TESTE01",
+  precoBase: 0.1,
+  imagens: ["/images/islandia/FLP03147.jpg"],
+  descricao: "Produto interno para testar o fluxo completo de checkout em produção sem custo relevante.",
+  variantes: variantesTeste,
+};
+
 export const products: Product[] = [
   ...gerarProdutosColecao("indonesia", fotosIndonesia, 289),
   ...gerarProdutosColecao("islandia", fotosIslandia, 319),
   ...gerarProdutosColecao("nyc", fotosNyc, 299),
+  produtoTeste,
 ];
 
 export function getProductBySlug(slug: string) {

@@ -28,6 +28,7 @@ export default function AdminPedidosPage() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [enviandoId, setEnviandoId] = useState<string | null>(null);
+  const [cancelandoId, setCancelandoId] = useState<string | null>(null);
   const [rastreios, setRastreios] = useState<Record<string, { codigo: string; transportadora: string }>>({});
   const [concluidos, setConcluidos] = useState<Set<string>>(new Set());
 
@@ -82,6 +83,28 @@ export default function AdminPedidosPage() {
       }
     } finally {
       setEnviandoId(null);
+    }
+  }
+
+  async function cancelarPedido(pedidoId: string) {
+    if (!confirm("Tem certeza que quer cancelar este pedido? O cliente será avisado por e-mail.")) {
+      return;
+    }
+    setCancelandoId(pedidoId);
+    try {
+      const resp = await fetch("/api/admin/cancelar-pedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha, pedidoId }),
+      });
+      if (resp.ok) {
+        setConcluidos((atual) => new Set(atual).add(pedidoId));
+      } else {
+        const data = await resp.json().catch(() => null);
+        alert(data?.error || "Falha ao cancelar pedido");
+      }
+    } finally {
+      setCancelandoId(null);
     }
   }
 
@@ -191,6 +214,13 @@ export default function AdminPedidosPage() {
                 className="rounded bg-neutral-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
               >
                 {enviandoId === pedido.id ? "Enviando..." : "Marcar como enviado e avisar cliente"}
+              </button>
+              <button
+                onClick={() => cancelarPedido(pedido.id)}
+                disabled={cancelandoId === pedido.id}
+                className="rounded border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+              >
+                {cancelandoId === pedido.id ? "Cancelando..." : "Cancelar pedido"}
               </button>
             </div>
           </div>
