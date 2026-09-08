@@ -279,7 +279,7 @@ export default function CarrinhoPage() {
           disabled={!podeFinalizar}
           className="mt-2 rounded-full bg-neutral-900 px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {finalizando ? "Redirecionando..." : "Finalizar Compra (Mercado Pago)"}
+          {finalizando ? "Redirecionando..." : "Finalizar Compra"}
         </button>
         {!enderecoCompleto && (
           <p className="text-xs text-neutral-400">Preencha o endereço de entrega para continuar.</p>
