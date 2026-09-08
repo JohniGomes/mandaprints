@@ -15,6 +15,7 @@ const ENDERECO_VAZIO: EnderecoEntrega = {
   nome: "",
   email: "",
   telefone: "",
+  cpf: "",
   cep: "",
   rua: "",
   numero: "",
@@ -97,6 +98,7 @@ export default function CarrinhoPage() {
   const enderecoCompleto =
     endereco.nome.trim() &&
     REGEX_EMAIL.test(endereco.email.trim()) &&
+    endereco.cpf.replace(/\D/g, "").length === 11 &&
     endereco.telefone.trim() &&
     endereco.cep.replace(/\D/g, "").length === 8 &&
     endereco.rua.trim() &&
@@ -213,6 +215,13 @@ export default function CarrinhoPage() {
             value={endereco.telefone}
             onChange={(e) => atualizarCampo("telefone", e.target.value)}
             className="rounded border border-neutral-300 px-3 py-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="CPF (necessário para pagamento via Pix)"
+            value={endereco.cpf}
+            onChange={(e) => atualizarCampo("cpf", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm sm:col-span-2"
           />
           <div className="relative">
             <input

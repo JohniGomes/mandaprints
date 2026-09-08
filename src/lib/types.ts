@@ -32,6 +32,7 @@ export interface EnderecoEntrega {
   nome: string;
   email: string;
   telefone: string;
+  cpf: string;
   cep: string;
   rua: string;
   numero: string;

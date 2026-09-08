@@ -56,6 +56,9 @@ export async function POST(req: NextRequest) {
         name: body.endereco?.nome,
         email: body.endereco?.email,
         phone: body.endereco?.telefone ? { number: body.endereco.telefone } : undefined,
+        identification: body.endereco?.cpf
+          ? { type: "CPF", number: body.endereco.cpf.replace(/\D/g, "") }
+          : undefined,
       },
       back_urls: {
         success: `${baseUrl}/pedido/sucesso`,

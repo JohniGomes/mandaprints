@@ -19,7 +19,7 @@ const exo2 = Exo_2({
 });
 
 export const metadata: Metadata = {
-  title: "Filipe Lara Fotografia | Quadros Decorativos",
+  title: "Manda Prints | Quadros Decorativos",
   description: "Fotografias autorais impressas em tela canvas, organizadas por coleções.",
   other: {
     "color-scheme": "light",

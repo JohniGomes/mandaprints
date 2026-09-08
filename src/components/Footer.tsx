@@ -38,7 +38,7 @@ export default function Footer() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
           <div>
             <h4 className="text-2xl font-bold tracking-wide">
-              Filipe<span className="text-emerald-400">Lara</span>
+              Manda<span className="text-emerald-400">Prints</span>
             </h4>
             <p className="mt-3 text-sm text-neutral-400">
               por Filipe Lara · Coleção de quadros autorais
@@ -63,7 +63,7 @@ export default function Footer() {
         </div>
       </ScrollReveal>
       <div className="border-t border-white/10 px-4 py-6 text-center text-xs text-neutral-500 lg:px-8">
-        <p>© {new Date().getFullYear()} — Filipe Lara Fotografia. Todos os direitos reservados.</p>
+        <p>© {new Date().getFullYear()} — Manda Prints. Todos os direitos reservados.</p>
         <p className="mt-1">Todas as imagens são obra autoral · reprodução não autorizada.</p>
       </div>
     </footer>

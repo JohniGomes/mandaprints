@@ -31,7 +31,7 @@ export default function Header() {
         </button>
 
         <Link href="/" className="text-xl font-bold tracking-widest text-neutral-900 sm:text-2xl">
-          FILIPE LARA
+          MANDA PRINTS
         </Link>
 
         <nav className="hidden md:block">
