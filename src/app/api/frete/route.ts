@@ -54,7 +54,9 @@ export async function POST(req: NextRequest) {
       nome: c.name,
       preco: Number(c.price),
       prazo: `${c.delivery_time} dias úteis`,
-    }));
+    }))
+    // Mais barata primeiro — o carrinho usa a primeira opção como padrão.
+    .sort((a, b) => a.preco - b.preco);
 
   return NextResponse.json({ simulado: false, opcoes });
 }
