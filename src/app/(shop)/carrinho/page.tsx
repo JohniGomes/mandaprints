@@ -9,8 +9,11 @@ function formatarPreco(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const ENDERECO_VAZIO: EnderecoEntrega = {
   nome: "",
+  email: "",
   telefone: "",
   cep: "",
   rua: "",
@@ -62,7 +65,14 @@ export default function CarrinhoPage() {
     }
   }
 
+  const ehPedidoDeTeste = itens.some((item) => item.produtoSlug === "teste-checkout");
+
   async function calcularFrete(cepLimpo: string) {
+    if (ehPedidoDeTeste) {
+      // Produto interno de teste — frete zerado para não gerar custo.
+      setFrete({ nome: "Grátis (pedido de teste)", preco: 0, prazo: "-" });
+      return;
+    }
     setCarregandoFrete(true);
     setErroFrete(null);
     try {
@@ -86,6 +96,7 @@ export default function CarrinhoPage() {
 
   const enderecoCompleto =
     endereco.nome.trim() &&
+    REGEX_EMAIL.test(endereco.email.trim()) &&
     endereco.telefone.trim() &&
     endereco.cep.replace(/\D/g, "").length === 8 &&
     endereco.rua.trim() &&
@@ -188,6 +199,13 @@ export default function CarrinhoPage() {
             value={endereco.nome}
             onChange={(e) => atualizarCampo("nome", e.target.value)}
             className="rounded border border-neutral-300 px-3 py-2 text-sm sm:col-span-2"
+          />
+          <input
+            type="email"
+            placeholder="E-mail"
+            value={endereco.email}
+            onChange={(e) => atualizarCampo("email", e.target.value)}
+            className="rounded border border-neutral-300 px-3 py-2 text-sm"
           />
           <input
             type="tel"

@@ -30,6 +30,7 @@ export interface Collection {
 
 export interface EnderecoEntrega {
   nome: string;
+  email: string;
   telefone: string;
   cep: string;
   rua: string;

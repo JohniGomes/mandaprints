@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
       items,
       payer: {
         name: body.endereco?.nome,
+        email: body.endereco?.email,
         phone: body.endereco?.telefone ? { number: body.endereco.telefone } : undefined,
       },
       back_urls: {
@@ -87,6 +88,7 @@ export async function POST(req: NextRequest) {
       endereco: body.endereco,
       total,
       cliente_nome: body.endereco?.nome ?? null,
+      cliente_email: body.endereco?.email ?? null,
       cliente_telefone: body.endereco?.telefone ?? null,
     });
   } catch (err) {
